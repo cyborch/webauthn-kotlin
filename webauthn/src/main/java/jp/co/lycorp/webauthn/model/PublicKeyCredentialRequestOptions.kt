@@ -14,15 +14,12 @@
  * under the License.
  */
 
-buildscript {
-    ext.kotlin_version = "$project.kotlinVersion"
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.9.3.0"
-    }
-}
+package jp.co.lycorp.webauthn.model
+
+class PublicKeyCredentialRequestOptions(
+    val challenge: String,
+    val rpId: String,
+    val allowCredentials: List<PublicKeyCredentialDescriptor>?,
+    val userVerification: UserVerificationRequirement = UserVerificationRequirement.PREFERRED,
+    val extensions: ClientExtensionInput?,
+)

@@ -34,15 +34,15 @@ plugins {
     id "maven-publish"
     id "com.android.library"
     id "kotlin-android"
-    id "kotlin-kapt"
+    id "com.google.devtools.ksp" version "2.0.21-1.0.28"
     id "org.jetbrains.kotlin.android"
     id "de.mannodermaus.android-junit5"
     id "org.jlleitschuh.gradle.ktlint" version "12.0.3"
 }
 
 android {
-    namespace "com.lycorp.webauthn"
-    compileSdk 33
+    namespace "jp.co.lycorp.webauthn"
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 28
@@ -91,7 +91,6 @@ dependencies {
     implementation "androidx.core:core-ktx:$project.coreVersion"
     implementation "androidx.appcompat:appcompat:$project.appcompatVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$project.kotlinxCoroutinesVersion"
-    implementation 'androidx.test.ext:junit-ktx:1.1.5'
 
     // library for test
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:$project.kotlinTestJunitVersion"
@@ -112,9 +111,11 @@ dependencies {
     androidTestImplementation platform("org.junit:junit-bom:$project.junit5Version")
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api"
     androidTestRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-params:$project.junit5Version"
 
-    // assertJ
-    androidTestImplementation("org.assertj:assertj-core:$project.assertJVersion")
+    // truth
+    androidTestImplementation("com.google.truth:truth:$project.truthVersion")
+    testImplementation("com.google.truth:truth:$project.truthVersion")
 
     // cbor
     implementation group: "co.nstant.in", name: "cbor", version: "0.9"
@@ -127,7 +128,7 @@ dependencies {
 
     // Room
     implementation "androidx.room:room-runtime:$project.roomVersion"
-    kapt "androidx.room:room-compiler:$project.roomVersion"
+    ksp "androidx.room:room-compiler:$project.roomVersion"
     implementation "androidx.room:room-ktx:$project.roomVersion"
     androidTestImplementation "androidx.room:room-testing:$project.roomVersion"
 
@@ -137,16 +138,10 @@ dependencies {
     // Gson
     implementation "com.google.code.gson:gson:$project.gsonVersion"
 
-    // Kotest
-    testImplementation "io.kotest:kotest-runner-junit5-jvm:$project.kotestVersion"
-    testImplementation "io.kotest:kotest-assertions-core-jvm:$project.kotestVersion"
-    testImplementation "io.kotest:kotest-property:$project.kotestVersion"
-    testImplementation "io.kotest:kotest-framework-datatest:$project.kotestVersion"
-
     implementation "org.jetbrains.kotlin:kotlin-reflect:$project.kotlinVersion"
 }
 
-android.libraryVariants.all { variant ->
+android.libraryVariants.configureEach { variant ->
     variant.outputs.all {
         outputFileName = "webauthn-kotlin-release.aar"
     }
@@ -155,7 +150,7 @@ android.libraryVariants.all { variant ->
 publishing {
     publications {
         webauthnKotlinAar(MavenPublication) {
-            groupId = "com.lycorp.webauthn"
+            groupId = "jp.co.lycorp.webauthn"
             artifactId = "webauthn-kotlin"
             version = project.ext.versionName
             pom {

@@ -14,15 +14,16 @@
  * under the License.
  */
 
-buildscript {
-    ext.kotlin_version = "$project.kotlinVersion"
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.9.3.0"
+package jp.co.lycorp.webauthn.model
+
+enum class AuthenticatorAttachment(val value: String) {
+    PLATFORM("platform"),
+    CROSS_PLATFORM("cross-platform"),
+    ;
+
+    companion object {
+        fun fromValue(value: String): AuthenticatorAttachment? {
+            return AuthenticatorAttachment.values().find { it.name == value }
+        }
     }
 }

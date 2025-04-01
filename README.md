@@ -13,10 +13,14 @@ The `PublicKeyCredential` serves as the client within the authentication framewo
 - **create()**: Starts the process of generating new asymmetric key credentials via an authenticator.
 - **get()**: Prompts the user to authenticate with a relying party using their existing credentials.
 
-We offer two classes that inherit from PublicKeyCredential. Each class uses different types of authenticators.
+The `PublicKeyCredential` class is now designed for flexible use, allowing users to specify their desired authentication and attestation configurations directly.
 
-- **Biometric**: Manages public key credentials using the biometric authenticator. It facilitates secure user verification by leveraging biometric data.
-- **DeviceCredential**: Manages public key credentials using the device credential authenticator. It supports a combination of biometric data and device-based credentials like PINs or patterns for authentication.
+To use `PublicKeyCredential`, you need to provide the following parameters when initializing the class:
+
+- **authenticationMethod**: Define the method of authentication to use specific authenticator, such as biometric or device credential authenticator.
+- **attestationStatement**: Specify the format for the attestation statement.
+  This setup allows you to customize the credential management process according to your specific security requirements.
+
 
 ### RelyingParty
 
@@ -39,7 +43,7 @@ First, you need to create an implementation of the `RelyingParty` interface. Thi
 
 To help you get started with your implementation, we recommend checking out a sample application available on GitHub:
 
-* [webauthndemo-kotlin/RelyingParty](https://github.com/line/webauthndemo-kotlin/blob/main/app/src/main/java/com/lycorp/webauthn/sample/network/Fido2RelyingPartyImpl.kt)
+* [webauthndemo-kotlin/RelyingParty](https://github.com/line/webauthndemo-kotlin/blob/main/app/src/main/java/jp/co/lycorp/webauthn/sample/network/Fido2RelyingPartyImpl.kt)
 
 This sample provides a practical example of how to implement the `RelyingParty` interface in a real-world Android application. It will give you insights into integrating FIDO2 functionalities effectively with your server setup.
 
@@ -49,7 +53,7 @@ Next, you need to create an implementation of the `CredentialSourceStorage ` int
 
 To help you get started with your implementation, we recommend checking out a sample application available on GitHub:
 
-* [webauthndemo-kotlin/CredentialSourceStorage](https://github.com/line/webauthndemo-kotlin/blob/main/app/src/main/java/com/lycorp/webauthn/sample/data/database/RoomCredentialSourceStorage.kt)
+* [webauthndemo-kotlin/CredentialSourceStorage](https://github.com/line/webauthndemo-kotlin/blob/main/app/src/main/java/jp/co/lycorp/webauthn/sample/data/database/RoomCredentialSourceStorage.kt)
 
 ### Step 3: Initialize `PublicKeyCredential`
 Once you have your relying party and credential storage implementation ready, you can initialize the public key credential.
@@ -59,18 +63,28 @@ Once you have your relying party and credential storage implementation ready, yo
 val rp = YourRelyingParty()
 val db = YourCredentialSourceStorage()
 
-// You can use a biometric.
-val publicKeyCredential = Biometric(
+// You can use a biometric authenticator.
+val publicKeyCredential = PublicKeyCredential(
     rpClient = rp,
     db = db,
-    activity = activity
+    authenticationMethod = AuthenticationMethod.Biometric,
+    attestationStatement = AttestationStatementFormat.NONE,
 )
 
 // ,or you can use a device credential.
 val publicKeyCredential = DeviceCredential(
     rpClient = rp,
     db = db,
-    activity = activity
+    authenticationMethod = AuthenticationMethod.DeviceCredential,
+    attestationStatement = AttestationStatementFormat.NONE,
+)
+
+// You can use attestation using AttestationStatementFormat.ANDROID_KEY.
+val publicKeyCredential = DeviceCredential(
+    rpClient = rp,
+    db = db,
+    authenticationMethod = AuthenticationMethod.Biometric,
+    attestationStatement = AttestationStatementFormat.ANDROID_KEY,
 )
 ```
 
@@ -87,6 +101,7 @@ Register a new credential using the `create` method:
 
 ```kotlin
 val result: Result<Unit> = publicKeyCredential.create(
+    activity = activity,
     options = registrationOptions,
     fido2PromptInfo = fido2PromptInfo,
 )
@@ -97,6 +112,7 @@ Authenticate using an existing credential with the `get` method:
 
 ```kotlin
 val result: Result<Unit> = publicKeyCredential.get(
+    activity = activity,
     options = authenticationOptions,
     fido2PromptInfo = fido2PromptInfo,
 )
