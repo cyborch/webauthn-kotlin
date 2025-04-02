@@ -14,15 +14,19 @@
  * under the License.
  */
 
-buildscript {
-    ext.kotlin_version = "$project.kotlinVersion"
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.9.3.0"
-    }
+package jp.co.lycorp.webauthn.authenticator.keygenerator
+
+import java.security.KeyPair
+import jp.co.lycorp.webauthn.model.COSEAlgorithmIdentifier
+
+abstract class Fido2KeyGenerator {
+    val lock = Any()
+
+    abstract fun generateFido2Key(
+        keyAlias: String,
+        challenge: ByteArray?,
+        publicKeyAlgorithm: COSEAlgorithmIdentifier,
+        isStrongBoxBacked: Boolean,
+        userAuthenticationRequired: Boolean = true
+    ): KeyPair
 }

@@ -14,15 +14,20 @@
  * under the License.
  */
 
-buildscript {
-    ext.kotlin_version = "$project.kotlinVersion"
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.9.3.0"
-    }
+package jp.co.lycorp.webauthn.model
+
+interface AuthenticatorResponse {
+    val clientDataJSON: ByteArray
 }
+
+class AuthenticatorAttestationResponse(
+    override val clientDataJSON: ByteArray,
+    val attestationObject: ByteArray,
+) : jp.co.lycorp.webauthn.model.AuthenticatorResponse
+
+class AuthenticatorAssertionResponse(
+    val authenticatorData: ByteArray,
+    val signature: ByteArray,
+    val userHandle: ByteArray?,
+    override val clientDataJSON: ByteArray,
+) : jp.co.lycorp.webauthn.model.AuthenticatorResponse

@@ -20,5 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.lycorp.webauthn.** { *; }
+-keep class jp.co.lycorp.webauthn.** { *; }
 -dontwarn java.lang.invoke.StringConcatFactory

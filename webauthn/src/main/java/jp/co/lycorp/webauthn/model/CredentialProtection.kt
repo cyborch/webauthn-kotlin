@@ -14,15 +14,9 @@
  * under the License.
  */
 
-buildscript {
-    ext.kotlin_version = "$project.kotlinVersion"
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.9.3.0"
-    }
+package jp.co.lycorp.webauthn.model
+
+class CredentialProtection {
+    val credentialProtectionPolicy: String = "USER_VERIFICATION_REQUIRED"
+    val enforceCredentialProtectionPolicy: Boolean = true
 }
