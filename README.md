@@ -31,7 +31,24 @@ Library users must implement the `RelyingParty` interface themselves.
 The `CredentialSourceStorage` is an interface that defines the behavior of a database for handling a public key credential source and its signature counter.
 
 ## Requirements
-- Android >= 9 (Pie) / API level >= 28
+
+### Runtime Requirements
+- **Android**: API level 28 (Android 9.0 Pie) or higher
+- **Target SDK**: 35 (Android 15)
+
+### Development Requirements  
+- **Java**: 21 (for building)
+- **Kotlin**: 2.2.10
+- **Android Gradle Plugin**: 8.12.1
+- **Gradle**: 9.0.0
+
+### Build System
+- **Compile SDK**: 35
+- **Min SDK**: 28
+- **Target SDK**: 35
+- **Java Compatibility**: 11 (bytecode target)
+
+**Note**: The library is built with Java 21 for optimal performance but generates Java 11-compatible bytecode for maximum Android compatibility.
 
 
 ## Usage
@@ -117,6 +134,30 @@ val result: Result<Unit> = publicKeyCredential.get(
     fido2PromptInfo = fido2PromptInfo,
 )
 ```
+
+## Build Instructions
+
+### Prerequisites
+- Java 21 installed and configured as JAVA_HOME
+- Android SDK with API level 35
+
+### Building the Library
+```bash
+# Clone the repository
+git clone https://github.com/line/webauthn-kotlin.git
+cd webauthn-kotlin
+
+# Build the library
+./gradlew build
+
+# Publish to local Maven repository
+./gradlew publishToMavenLocal
+```
+
+### IDE Setup
+For Android Studio users:
+1. **Gradle JVM**: Set to Java 21 in Preferences → Build, Execution, Deployment → Build Tools → Gradle
+2. **Project Structure**: Use Project SDK Android API 35, Language Level 11
 
 ## License
 Apache License 2.0. See [`LICENSE`](./LICENSE).
