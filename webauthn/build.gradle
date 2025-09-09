@@ -143,37 +143,23 @@ dependencies {
 
 android.libraryVariants.configureEach { variant ->
     variant.outputs.all {
-        outputFileName = "webauthn-kotlin-release.aar"
+        outputFileName = "webauthn-kotlin-${variant.name}.aar"
     }
 }
 
-publishing {
-    publications {
-        webauthnKotlinAar(MavenPublication) {
-            groupId = "jp.co.lycorp.webauthn"
-            artifactId = "webauthn-kotlin"
-            version = project.ext.versionName
-            pom {
-                name = "webauthn-kotlin"
-                description = "A Kotlin library for implementing WebAuthn authentication in Android applications."
-                url = "https://github.com/line/webauthn-kotlin"
-            }
-            artifact("$buildDir/outputs/aar/webauthn-kotlin-release.aar")
-            pom.withXml {
-                final dependenciesNode = asNode().appendNode('dependencies')
-
-                configurations.implementation.allDependencies.each {
-                    final dependencyNode = dependenciesNode.appendNode('dependency')
-                    dependencyNode.appendNode('groupId', it.group)
-                    dependencyNode.appendNode('artifactId', it.name)
-                    dependencyNode.appendNode('version', it.version)
-                }
-
-                configurations.api.allDependencies.each {
-                    final dependencyNode = dependenciesNode.appendNode('dependency')
-                    dependencyNode.appendNode('groupId', it.group)
-                    dependencyNode.appendNode('artifactId', it.name)
-                    dependencyNode.appendNode('version', it.version)
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = "jp.co.lycorp.webauthn"
+                artifactId = "webauthn-kotlin"
+                version = project.ext.versionName
+                
+                pom {
+                    name = "webauthn-kotlin"
+                    description = "A Kotlin library for implementing WebAuthn authentication in Android applications."
+                    url = "https://github.com/line/webauthn-kotlin"
                 }
             }
         }
