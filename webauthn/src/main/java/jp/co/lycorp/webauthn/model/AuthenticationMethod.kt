@@ -22,8 +22,6 @@ enum class AuthenticationMethod(val value: String) {
     ;
 
     companion object {
-        fun fromValue(value: String): AuthenticationMethod? {
-            return AuthenticationMethod.values().find { it.value == value }
-        }
+        fun fromValue(value: String): AuthenticationMethod? = AuthenticationMethod.values().find { it.value == value }
     }
 }

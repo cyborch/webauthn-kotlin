@@ -23,8 +23,7 @@ enum class AttestationConveyancePreference(val value: String) {
     ;
 
     companion object {
-        fun fromValue(value: String): AttestationConveyancePreference? {
-            return AttestationConveyancePreference.values().find { it.value == value }
-        }
+        fun fromValue(value: String): AttestationConveyancePreference? =
+            AttestationConveyancePreference.values().find { it.value == value }
     }
 }

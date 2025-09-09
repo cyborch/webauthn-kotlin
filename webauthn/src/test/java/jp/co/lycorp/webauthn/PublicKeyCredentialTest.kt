@@ -218,7 +218,8 @@ class PublicKeyCredentialTest {
             coEvery { mockRelyingParty.getRegistrationData(any()) } returns RegistrationData(
                 attestation = AttestationConveyancePreference.DIRECT,
                 authenticatorSelection = AuthenticatorSelectionCriteria(
-                    null, UserVerificationRequirement.REQUIRED.value
+                    null,
+                    UserVerificationRequirement.REQUIRED.value
                 ),
                 challenge = Fido2Util.generateRandomByteArray(32).toBase64url(),
                 excludeCredentials = emptyList(),
@@ -255,9 +256,8 @@ class PublicKeyCredentialTest {
         }
     }
 
-    private fun generateString(pattern: String, length: Int): String {
-        return pattern.repeat((length + pattern.length - 1) / pattern.length).take(length)
-    }
+    private fun generateString(pattern: String, length: Int): String =
+        pattern.repeat((length + pattern.length - 1) / pattern.length).take(length)
 
     private fun performConcurrentExecution(times: Int, block: suspend (Int) -> Unit) = runTest {
         (1..times).map {
@@ -267,13 +267,11 @@ class PublicKeyCredentialTest {
         }.map { it.await() }
     }
 
-    private fun getExceptionBasedOnType(exceptionClass: KClass<out Throwable>): Throwable {
-        return when (exceptionClass) {
-            WebAuthnException.CoreException.NotAllowedException::class ->
-                WebAuthnException.CoreException.NotAllowedException()
-            WebAuthnException.CoreException.InvalidStateException::class ->
-                WebAuthnException.CoreException.InvalidStateException()
-            else -> Exception("Unknown exception type")
-        }
+    private fun getExceptionBasedOnType(exceptionClass: KClass<out Throwable>): Throwable = when (exceptionClass) {
+        WebAuthnException.CoreException.NotAllowedException::class ->
+            WebAuthnException.CoreException.NotAllowedException()
+        WebAuthnException.CoreException.InvalidStateException::class ->
+            WebAuthnException.CoreException.InvalidStateException()
+        else -> Exception("Unknown exception type")
     }
 }

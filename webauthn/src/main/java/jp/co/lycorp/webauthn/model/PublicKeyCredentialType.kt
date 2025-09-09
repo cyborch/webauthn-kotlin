@@ -21,8 +21,6 @@ enum class PublicKeyCredentialType(val value: String) {
     ;
 
     companion object {
-        fun fromValue(value: String): PublicKeyCredentialType? {
-            return values().find { it.value == value }
-        }
+        fun fromValue(value: String): PublicKeyCredentialType? = values().find { it.value == value }
     }
 }

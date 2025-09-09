@@ -22,8 +22,7 @@ enum class AuthenticatorTransport(val value: String) {
     ;
 
     companion object {
-        fun fromValue(value: String): AuthenticatorTransport? {
-            return AuthenticatorTransport.values().find { it.value == value }
-        }
+        fun fromValue(value: String): AuthenticatorTransport? =
+            AuthenticatorTransport.values().find { it.value == value }
     }
 }

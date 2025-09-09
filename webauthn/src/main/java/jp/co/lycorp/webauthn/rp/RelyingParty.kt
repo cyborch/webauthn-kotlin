@@ -73,10 +73,7 @@ data class RegistrationOptions(
     val username: String
 )
 
-data class AuthenticationOptions(
-    val userVerification: UserVerificationRequirement,
-    val username: String
-)
+data class AuthenticationOptions(val userVerification: UserVerificationRequirement, val username: String)
 
 data class RegistrationData(
     val attestation: AttestationConveyancePreference,

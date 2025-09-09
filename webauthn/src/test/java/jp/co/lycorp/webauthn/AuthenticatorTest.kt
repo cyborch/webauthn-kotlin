@@ -121,7 +121,8 @@ class AuthenticatorTest {
             .generateKeyPair()
 
         es256CredParams = PublicKeyCredentialParams(
-            PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256
+            PublicKeyCredentialType.PUBLIC_KEY,
+            COSEAlgorithmIdentifier.ES256
         )
 
         registeredCredId = Fido2Util.generateRandomByteArray(32).toBase64url()

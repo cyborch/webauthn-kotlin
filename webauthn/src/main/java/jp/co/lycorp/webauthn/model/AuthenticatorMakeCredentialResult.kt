@@ -16,7 +16,4 @@
 
 package jp.co.lycorp.webauthn.model
 
-data class AuthenticatorMakeCredentialResult(
-    val credentialId: ByteArray,
-    val attestationObject: ByteArray,
-)
+data class AuthenticatorMakeCredentialResult(val credentialId: ByteArray, val attestationObject: ByteArray,)

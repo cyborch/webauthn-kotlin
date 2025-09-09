@@ -81,11 +81,7 @@ data class AuthenticatorData(
  * |----------|--------------|-----------------|---------------|
  * | 16 bytes |   2 bytes    | credID.length() | variable size |
  */
-class AttestedCredData(
-    val aaguid: ByteArray,
-    val credId: ByteArray,
-    val publicKey: ByteArray,
-) {
+class AttestedCredData(val aaguid: ByteArray, val credId: ByteArray, val publicKey: ByteArray,) {
     fun toByteArray(): ByteArray {
         try {
             return ByteBuffer.allocate(aaguid.size + 2 + credId.size + publicKey.size).apply {
@@ -100,13 +96,7 @@ class AttestedCredData(
     }
 }
 
-class EC2COSEKey(
-    var kty: Int,
-    var alg: Int,
-    var crv: Int,
-    var x: ByteArray,
-    var y: ByteArray,
-) : CborSerializable {
+class EC2COSEKey(var kty: Int, var alg: Int, var crv: Int, var x: ByteArray, var y: ByteArray,) : CborSerializable {
     constructor(ecPublicKey: ECPublicKey) : this(
         kty = 2,
         alg = -7,
@@ -115,15 +105,13 @@ class EC2COSEKey(
         y = ecPublicKey.w.affineY.toByteArray(),
     )
 
-    override fun <T : AbstractBuilder<*>?> toCBOR(builder: MapBuilder<T>): T {
-        return builder
-            .put(1, kty.toLong())
-            .put(3, alg.toLong())
-            .put(-1, crv.toLong())
-            .put(-2, x)
-            .put(-3, y)
-            .end()
-    }
+    override fun <T : AbstractBuilder<*>?> toCBOR(builder: MapBuilder<T>): T = builder
+        .put(1, kty.toLong())
+        .put(3, alg.toLong())
+        .put(-1, crv.toLong())
+        .put(-2, x)
+        .put(-3, y)
+        .end()
 }
 
 enum class AuthenticatorDataFlags(val value: UByte) {

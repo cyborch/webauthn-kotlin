@@ -27,49 +27,41 @@ enum class AuthenticatorType(val authenticatorName: String, val aaguid: UUID) {
     DeviceCredentialAndroidKey("DeviceCredentialAndroidKey", UUID.fromString("2b7a96a3-f571-ee4c-632c-c5458dfadfe3")),
     ;
 
-    fun aaguidBytes(): ByteArray {
-        return ByteBuffer.wrap(ByteArray(16)).apply {
-            order(ByteOrder.BIG_ENDIAN)
-            putLong(aaguid.mostSignificantBits)
-            putLong(aaguid.leastSignificantBits)
-        }.array()
+    fun aaguidBytes(): ByteArray = ByteBuffer.wrap(ByteArray(16)).apply {
+        order(ByteOrder.BIG_ENDIAN)
+        putLong(aaguid.mostSignificantBits)
+        putLong(aaguid.leastSignificantBits)
+    }.array()
+
+    fun getAuthenticationMethod(): AuthenticationMethod = when (this) {
+        BiometricNone -> AuthenticationMethod.Biometric
+        BiometricAndroidKey -> AuthenticationMethod.Biometric
+        DeviceCredentialNone -> AuthenticationMethod.DeviceCredential
+        DeviceCredentialAndroidKey -> AuthenticationMethod.DeviceCredential
     }
 
-    fun getAuthenticationMethod(): AuthenticationMethod {
-        return when (this) {
-            BiometricNone -> AuthenticationMethod.Biometric
-            BiometricAndroidKey -> AuthenticationMethod.Biometric
-            DeviceCredentialNone -> AuthenticationMethod.DeviceCredential
-            DeviceCredentialAndroidKey -> AuthenticationMethod.DeviceCredential
-        }
-    }
-
-    fun getAttestationStatementFormat(): AttestationStatementFormat {
-        return when (this) {
-            BiometricNone -> AttestationStatementFormat.NONE
-            BiometricAndroidKey -> AttestationStatementFormat.ANDROID_KEY
-            DeviceCredentialNone -> AttestationStatementFormat.NONE
-            DeviceCredentialAndroidKey -> AttestationStatementFormat.ANDROID_KEY
-        }
+    fun getAttestationStatementFormat(): AttestationStatementFormat = when (this) {
+        BiometricNone -> AttestationStatementFormat.NONE
+        BiometricAndroidKey -> AttestationStatementFormat.ANDROID_KEY
+        DeviceCredentialNone -> AttestationStatementFormat.NONE
+        DeviceCredentialAndroidKey -> AttestationStatementFormat.ANDROID_KEY
     }
 
     companion object {
         fun getAuthenticatorType(
             authenticationMethod: AuthenticationMethod,
             attestationStatementFormat: AttestationStatementFormat,
-        ): AuthenticatorType {
-            return when (authenticationMethod) {
-                AuthenticationMethod.Biometric -> {
-                    when (attestationStatementFormat) {
-                        AttestationStatementFormat.NONE -> BiometricNone
-                        AttestationStatementFormat.ANDROID_KEY -> BiometricAndroidKey
-                    }
+        ): AuthenticatorType = when (authenticationMethod) {
+            AuthenticationMethod.Biometric -> {
+                when (attestationStatementFormat) {
+                    AttestationStatementFormat.NONE -> BiometricNone
+                    AttestationStatementFormat.ANDROID_KEY -> BiometricAndroidKey
                 }
-                AuthenticationMethod.DeviceCredential -> {
-                    when (attestationStatementFormat) {
-                        AttestationStatementFormat.NONE -> DeviceCredentialNone
-                        AttestationStatementFormat.ANDROID_KEY -> DeviceCredentialAndroidKey
-                    }
+            }
+            AuthenticationMethod.DeviceCredential -> {
+                when (attestationStatementFormat) {
+                    AttestationStatementFormat.NONE -> DeviceCredentialNone
+                    AttestationStatementFormat.ANDROID_KEY -> DeviceCredentialAndroidKey
                 }
             }
         }

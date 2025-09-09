@@ -16,7 +16,4 @@
 
 package jp.co.lycorp.webauthn.model
 
-data class PublicKeyCredentialParams(
-    val type: PublicKeyCredentialType,
-    val alg: COSEAlgorithmIdentifier,
-)
+data class PublicKeyCredentialParams(val type: PublicKeyCredentialType, val alg: COSEAlgorithmIdentifier,)

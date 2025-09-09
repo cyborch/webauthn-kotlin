@@ -48,21 +48,19 @@ class MockCredentialSourceStorage : CredentialSourceStorage {
         }
     }
 
-    override fun loadAll(aaguid: UUID?): List<jp.co.lycorp.webauthn.model.PublicKeyCredentialSource> {
-        return credSourceTable
-            .filter { entity ->
-                aaguid == null || entity.aaguid == aaguid
-            }
-            .map { entity ->
-                jp.co.lycorp.webauthn.model.PublicKeyCredentialSource(
-                    type = entity.credType,
-                    id = entity.credId,
-                    rpId = entity.rpId,
-                    userHandle = entity.userHandle,
-                    aaguid = entity.aaguid,
-                )
-            }
-    }
+    override fun loadAll(aaguid: UUID?): List<jp.co.lycorp.webauthn.model.PublicKeyCredentialSource> = credSourceTable
+        .filter { entity ->
+            aaguid == null || entity.aaguid == aaguid
+        }
+        .map { entity ->
+            jp.co.lycorp.webauthn.model.PublicKeyCredentialSource(
+                type = entity.credType,
+                id = entity.credId,
+                rpId = entity.rpId,
+                userHandle = entity.userHandle,
+                aaguid = entity.aaguid,
+            )
+        }
 
     override fun delete(credId: String) {
         credSourceTable = credSourceTable.filter { it.credId != credId }.toMutableList()

@@ -27,8 +27,7 @@ enum class UserVerificationRequirement(val value: String) {
     ;
 
     companion object {
-        fun fromValue(value: String): UserVerificationRequirement? {
-            return UserVerificationRequirement.values().find { it.value == value }
-        }
+        fun fromValue(value: String): UserVerificationRequirement? =
+            UserVerificationRequirement.values().find { it.value == value }
     }
 }

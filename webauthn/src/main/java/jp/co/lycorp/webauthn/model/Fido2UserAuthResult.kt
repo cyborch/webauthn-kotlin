@@ -18,6 +18,4 @@ package jp.co.lycorp.webauthn.model
 
 import java.security.Signature
 
-data class Fido2UserAuthResult(
-    var signature: Signature?
-)
+data class Fido2UserAuthResult(var signature: Signature?)

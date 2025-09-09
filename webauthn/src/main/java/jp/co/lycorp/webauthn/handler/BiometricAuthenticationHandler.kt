@@ -44,9 +44,7 @@ internal class BiometricAuthenticationHandler(
         activity: FragmentActivity,
         fido2PromptInfo: Fido2PromptInfo?,
         signatureProvider: (() -> Signature)?
-    ): Fido2UserAuthResult {
-        return authenticateUserWithBiometricPrompt(activity, fido2PromptInfo, signatureProvider)
-    }
+    ): Fido2UserAuthResult = authenticateUserWithBiometricPrompt(activity, fido2PromptInfo, signatureProvider)
 
     private suspend fun authenticateUserWithBiometricPrompt(
         activity: FragmentActivity,

@@ -37,30 +37,26 @@ internal class DeviceCredentialAuthenticationHandler(
 
     private val keyguardManagerWrapper = KeyguardManagerWrapper()
 
-    override fun isSupported(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // API level >= 30
-            val biometricManager = BiometricManager.from(context)
-            biometricManager.canAuthenticate(
-                BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
-            ) == BiometricManager.BIOMETRIC_SUCCESS
-        } else {
-            // API level < 30
-            keyguardManagerWrapper.isSupported(context)
-        }
+    override fun isSupported(context: Context): Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        // API level >= 30
+        val biometricManager = BiometricManager.from(context)
+        biometricManager.canAuthenticate(
+            BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        ) == BiometricManager.BIOMETRIC_SUCCESS
+    } else {
+        // API level < 30
+        keyguardManagerWrapper.isSupported(context)
     }
 
     override suspend fun authenticate(
         activity: FragmentActivity,
         fido2PromptInfo: Fido2PromptInfo?,
         signatureProvider: (() -> Signature)?
-    ): Fido2UserAuthResult {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            authenticateUserWithBiometricPrompt(activity, fido2PromptInfo, signatureProvider)
-        } else {
-            authenticateUserWithKeyguardManager(activity, fido2PromptInfo, signatureProvider)
-        }
+    ): Fido2UserAuthResult = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        authenticateUserWithBiometricPrompt(activity, fido2PromptInfo, signatureProvider)
+    } else {
+        authenticateUserWithKeyguardManager(activity, fido2PromptInfo, signatureProvider)
     }
 
     private suspend fun authenticateUserWithBiometricPrompt(

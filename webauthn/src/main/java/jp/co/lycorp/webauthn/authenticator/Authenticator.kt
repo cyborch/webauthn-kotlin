@@ -534,7 +534,6 @@ internal class Authenticator(
      * @param context The application context.
      * @return True if StrongBox is supported, false otherwise.
      */
-    private fun isStrongBoxSupported(context: Context): Boolean {
-        return context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
-    }
+    private fun isStrongBoxSupported(context: Context): Boolean =
+        context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
 }
