@@ -30,11 +30,8 @@ import co.nstant.`in`.cbor.builder.MapBuilder
  * |--------------|------|-----------|
  * | variable size| text | map-based |
  */
-data class AttestationObject(
-    val authData: ByteArray,
-    val fmt: String,
-    val attStmt: AttestationStatement,
-) : CborSerializable {
+data class AttestationObject(val authData: ByteArray, val fmt: String, val attStmt: AttestationStatement,) :
+    CborSerializable {
     override fun <T : AbstractBuilder<*>?> toCBOR(builder: MapBuilder<T>): T {
         builder.put("authData", authData)
         builder.put("fmt", fmt)

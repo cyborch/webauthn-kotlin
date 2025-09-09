@@ -28,9 +28,7 @@ class Fido2KeyGeneratorTest {
 
     private val generatedAliases = mutableListOf<String>()
 
-    private fun generateRandomAlias(): String {
-        return Fido2Util.generateRandomByteArray(32).toBase64url()
-    }
+    private fun generateRandomAlias(): String = Fido2Util.generateRandomByteArray(32).toBase64url()
 
     private fun testKeyGenerator(keyGenerator: jp.co.lycorp.webauthn.authenticator.keygenerator.Fido2KeyGenerator) {
         val challenges = arrayOf(null, ByteArray(32) { it.toByte() })

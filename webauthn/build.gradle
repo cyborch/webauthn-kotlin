@@ -20,10 +20,9 @@ import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 buildscript {
     project.ext.isSnapshot = project.snapshotBuild.toBoolean()
 
-    def commitId = "git rev-parse --short HEAD".execute().text.trim()
-
+    // Use properties for version to avoid configuration cache issues
     if (project.ext.isSnapshot) {
-        project.ext.versionName = "${project.versionMajor}.${project.versionMinor}.${project.versionPatch}-${commitId}-SNAPSHOT" as GStringImpl
+        project.ext.versionName = "${project.versionMajor}.${project.versionMinor}.${project.versionPatch}-SNAPSHOT" as GStringImpl
     } else {
         project.ext.versionName = "${project.versionMajor}.${project.versionMinor}.${project.versionPatch}" as GStringImpl
     }
@@ -34,19 +33,19 @@ plugins {
     id "maven-publish"
     id "com.android.library"
     id "kotlin-android"
-    id "com.google.devtools.ksp" version "2.0.21-1.0.28"
+    id "com.google.devtools.ksp" version "2.2.10-2.0.2"
     id "org.jetbrains.kotlin.android"
     id "de.mannodermaus.android-junit5"
-    id "org.jlleitschuh.gradle.ktlint" version "12.0.3"
+    id "org.jlleitschuh.gradle.ktlint" version "13.1.0"
 }
 
 android {
     namespace "jp.co.lycorp.webauthn"
-    compileSdk 34
+    compileSdkVersion 35
 
     defaultConfig {
         minSdkVersion 28
-        targetSdk 33
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -65,6 +64,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs += [
+            "-language-version", "2.0",
+            "-api-version", "2.0"
+        ]
     }
     testOptions {
         unitTests.all {
@@ -74,6 +77,14 @@ android {
             includeAndroidResources = true
         }
     }
+    buildFeatures {
+        buildConfig = true
+    }
+
+    publishing {
+        singleVariant("release") {}
+    }
+
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md,NOTICE.md}"
@@ -82,10 +93,6 @@ android {
 }
 
 tasks.withType(KaptGenerateStubs).configureEach{kotlinOptions{jvmTarget = "11"}}
-
-kotlin {
-    jvmToolchain(11)
-}
 
 dependencies {
     implementation "androidx.core:core-ktx:$project.coreVersion"
@@ -106,6 +113,7 @@ dependencies {
     testImplementation platform("org.junit:junit-bom:$project.junit5Version")
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$project.junit5Version"
 
     androidTestImplementation platform("org.junit:junit-bom:$project.junit5Version")
@@ -143,37 +151,23 @@ dependencies {
 
 android.libraryVariants.configureEach { variant ->
     variant.outputs.all {
-        outputFileName = "webauthn-kotlin-release.aar"
+        outputFileName = "webauthn-kotlin-${variant.name}.aar"
     }
 }
 
-publishing {
-    publications {
-        webauthnKotlinAar(MavenPublication) {
-            groupId = "jp.co.lycorp.webauthn"
-            artifactId = "webauthn-kotlin"
-            version = project.ext.versionName
-            pom {
-                name = "webauthn-kotlin"
-                description = "A Kotlin library for implementing WebAuthn authentication in Android applications."
-                url = "https://github.com/line/webauthn-kotlin"
-            }
-            artifact("$buildDir/outputs/aar/webauthn-kotlin-release.aar")
-            pom.withXml {
-                final dependenciesNode = asNode().appendNode('dependencies')
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = "jp.co.lycorp.webauthn"
+                artifactId = "webauthn-kotlin"
+                version = project.ext.versionName
 
-                configurations.implementation.allDependencies.each {
-                    final dependencyNode = dependenciesNode.appendNode('dependency')
-                    dependencyNode.appendNode('groupId', it.group)
-                    dependencyNode.appendNode('artifactId', it.name)
-                    dependencyNode.appendNode('version', it.version)
-                }
-
-                configurations.api.allDependencies.each {
-                    final dependencyNode = dependenciesNode.appendNode('dependency')
-                    dependencyNode.appendNode('groupId', it.group)
-                    dependencyNode.appendNode('artifactId', it.name)
-                    dependencyNode.appendNode('version', it.version)
+                pom {
+                    name = "webauthn-kotlin"
+                    description = "A Kotlin library for implementing WebAuthn authentication in Android applications."
+                    url = "https://github.com/line/webauthn-kotlin"
                 }
             }
         }

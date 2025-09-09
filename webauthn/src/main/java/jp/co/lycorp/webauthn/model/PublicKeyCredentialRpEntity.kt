@@ -16,7 +16,4 @@
 
 package jp.co.lycorp.webauthn.model
 
-class PublicKeyCredentialRpEntity(
-    val id: String,
-    val name: String,
-)
+class PublicKeyCredentialRpEntity(val id: String, val name: String,)

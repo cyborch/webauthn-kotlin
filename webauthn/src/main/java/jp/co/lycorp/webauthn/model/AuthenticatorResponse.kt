@@ -20,10 +20,8 @@ interface AuthenticatorResponse {
     val clientDataJSON: ByteArray
 }
 
-class AuthenticatorAttestationResponse(
-    override val clientDataJSON: ByteArray,
-    val attestationObject: ByteArray,
-) : jp.co.lycorp.webauthn.model.AuthenticatorResponse
+class AuthenticatorAttestationResponse(override val clientDataJSON: ByteArray, val attestationObject: ByteArray,) :
+    jp.co.lycorp.webauthn.model.AuthenticatorResponse
 
 class AuthenticatorAssertionResponse(
     val authenticatorData: ByteArray,

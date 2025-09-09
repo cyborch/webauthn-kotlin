@@ -48,21 +48,19 @@ class MockCredentialSourceStorage : CredentialSourceStorage {
         }
     }
 
-    override fun loadAll(aaguid: UUID?): List<PublicKeyCredentialSource> {
-        return credSourceTable
-            .filter { entity ->
-                aaguid == null || entity.aaguid == aaguid
-            }
-            .map { entity ->
-                PublicKeyCredentialSource(
-                    type = entity.credType,
-                    id = entity.credId,
-                    rpId = entity.rpId,
-                    userHandle = entity.userHandle,
-                    aaguid = entity.aaguid,
-                )
-            }
-    }
+    override fun loadAll(aaguid: UUID?): List<PublicKeyCredentialSource> = credSourceTable
+        .filter { entity ->
+            aaguid == null || entity.aaguid == aaguid
+        }
+        .map { entity ->
+            PublicKeyCredentialSource(
+                type = entity.credType,
+                id = entity.credId,
+                rpId = entity.rpId,
+                userHandle = entity.userHandle,
+                aaguid = entity.aaguid,
+            )
+        }
 
     override fun delete(credId: String) {
         credSourceTable = credSourceTable.filter { it.credId != credId }.toMutableList()

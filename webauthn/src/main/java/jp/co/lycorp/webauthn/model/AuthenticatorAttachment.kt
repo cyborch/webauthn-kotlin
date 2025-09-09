@@ -22,8 +22,7 @@ enum class AuthenticatorAttachment(val value: String) {
     ;
 
     companion object {
-        fun fromValue(value: String): AuthenticatorAttachment? {
-            return AuthenticatorAttachment.values().find { it.name == value }
-        }
+        fun fromValue(value: String): AuthenticatorAttachment? =
+            AuthenticatorAttachment.values().find { it.name == value }
     }
 }

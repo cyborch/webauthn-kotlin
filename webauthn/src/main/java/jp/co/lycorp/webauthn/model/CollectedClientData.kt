@@ -16,8 +16,4 @@
 
 package jp.co.lycorp.webauthn.model
 
-data class CollectedClientData(
-    val type: String,
-    val challenge: String,
-    val origin: String,
-)
+data class CollectedClientData(val type: String, val challenge: String, val origin: String,)
