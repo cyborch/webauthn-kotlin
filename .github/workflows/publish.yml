@@ -36,12 +36,12 @@ jobs:
     - name: Run tests
       run: ./gradlew test testDebugUnitTest
 
-    - name: Set snapshot version (main branch)
-      if: github.ref == 'refs/heads/main'
+    - name: Set snapshot version (all pushes)
+      if: github.event_name != 'release'
       run: |
         sed -i 's/snapshotBuild=false/snapshotBuild=true/' gradle.properties
 
-    - name: Set release version (release event)
+    - name: Set release version (release event only)
       if: github.event_name == 'release'
       run: |
         sed -i 's/snapshotBuild=true/snapshotBuild=false/' gradle.properties
