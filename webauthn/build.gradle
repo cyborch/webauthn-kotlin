@@ -31,6 +31,7 @@ buildscript {
 
 plugins {
     id "maven-publish"
+    id "signing"
     id "com.android.library"
     id "kotlin-android"
     id "com.google.devtools.ksp" version "2.2.10-2.0.2"
@@ -155,21 +156,80 @@ android.libraryVariants.configureEach { variant ->
     }
 }
 
+// Generate sources and javadoc JARs
+tasks.register('androidSourcesJar', Jar) {
+    archiveClassifier.set("sources")
+    from android.sourceSets.main.java.srcDirs
+}
+
+tasks.register('androidJavadocJar', Jar) {
+    archiveClassifier.set("javadoc")
+    from "docs/javadoc" // You can generate this or use placeholder
+}
+
 afterEvaluate {
     publishing {
+        repositories {
+            maven {
+                name = "central"
+                url = project.ext.isSnapshot
+                    ? "https://central.sonatype.com/repository/maven-snapshots/"
+                    : "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+                credentials {
+                    username = System.getenv("MAVEN_CENTRAL_USERNAME")
+                    password = System.getenv("MAVEN_CENTRAL_PASSWORD")
+                }
+            }
+        }
+
         publications {
             release(MavenPublication) {
                 from components.release
+                artifact androidSourcesJar
+                artifact androidJavadocJar
+
                 groupId = "jp.co.lycorp.webauthn"
                 artifactId = "webauthn-kotlin"
                 version = project.ext.versionName
 
                 pom {
-                    name = "webauthn-kotlin"
-                    description = "A Kotlin library for implementing WebAuthn authentication in Android applications."
-                    url = "https://github.com/line/webauthn-kotlin"
+                    name.set(artifactId)
+                    description.set("A Kotlin library for implementing WebAuthn authentication in Android applications")
+                    url.set("https://github.com/line/webauthn-kotlin")
+
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            name.set("LY Corporation")
+                            email.set("dl_oss_dev@linecorp.com")
+                            url.set("https://engineering.linecorp.com/en/")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git@github.com:line/webauthn-kotlin.git")
+                        developerConnection.set("scm:git:ssh://github.com:line/webauthn-kotlin.git")
+                        url.set("https://github.com/line/webauthn-kotlin")
+                    }
                 }
             }
+        }
+    }
+
+    signing {
+        def signingKeyId = System.getenv("GPG_SECRET_KEY_ID")
+        def signingKey = System.getenv("GPG_SECRET_KEY")
+        def signingPassword = System.getenv("GPG_SECRET_PASSWORD")
+
+        if (signingKeyId && signingKey && signingPassword) {
+            useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+            sign publishing.publications.release
         }
     }
 }
