@@ -169,26 +169,13 @@ tasks.register('androidJavadocJar', Jar) {
 
 afterEvaluate {
     publishing {
-        repositories {
-            maven {
-                name = "central"
-                url = project.ext.isSnapshot
-                    ? "https://central.sonatype.com/repository/maven-snapshots/"
-                    : "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
-                credentials {
-                    username = System.getenv("MAVEN_CENTRAL_USERNAME")
-                    password = System.getenv("MAVEN_CENTRAL_PASSWORD")
-                }
-            }
-        }
-
         publications {
             release(MavenPublication) {
                 from components.release
                 artifact androidSourcesJar
                 artifact androidJavadocJar
 
-                groupId = "jp.co.lycorp.webauthn"
+                groupId = "jp.co.lycorp"
                 artifactId = "webauthn-kotlin"
                 version = project.ext.versionName
 
@@ -223,9 +210,9 @@ afterEvaluate {
     }
 
     signing {
-        def signingKeyId = System.getenv("GPG_SECRET_KEY_ID")
-        def signingKey = System.getenv("GPG_SECRET_KEY")
-        def signingPassword = System.getenv("GPG_SECRET_PASSWORD")
+        def signingKeyId = project.findProperty("signingKeyId")
+        def signingKey = project.findProperty("signingKey")
+        def signingPassword = project.findProperty("signingPassword")
 
         if (signingKeyId && signingKey && signingPassword) {
             useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
