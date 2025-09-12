@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - test/maven-deploy
   release:
     types: [published]
 
@@ -49,14 +50,26 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-    - name: Publish to Maven Central
-      run: ./gradlew --max-workers=1 publish
+
+    - name: Publish Snapshot to Sonatype
+      if: github.event_name != 'release'
+      run: ./gradlew --max-workers=1 publishToSonatype
       env:
-        MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-        MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-        GPG_SECRET_KEY_ID: ${{ secrets.GPG_SECRET_KEY_ID }}
-        GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-        GPG_SECRET_PASSWORD: ${{ secrets.GPG_SECRET_PASSWORD }}
+        ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+        ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.GPG_SECRET_KEY_ID }}
+        ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_SECRET_KEY }}
+        ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_SECRET_PASSWORD }}
+
+    - name: Publish Release to Maven Central
+      if: github.event_name == 'release'
+      run: ./gradlew --max-workers=1 publishToSonatype closeAndReleaseSonatypeRepository
+      env:
+        ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+        ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.GPG_SECRET_KEY_ID }}
+        ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_SECRET_KEY }}
+        ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_SECRET_PASSWORD }}
 
     - name: Cleanup Gradle Cache
       run: |
