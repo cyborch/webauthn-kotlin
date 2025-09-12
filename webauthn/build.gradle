@@ -41,7 +41,7 @@ plugins {
 }
 
 android {
-    namespace "jp.co.lycorp.webauthn"
+    namespace "com.linecorp.webauthn"
     compileSdkVersion 35
 
     defaultConfig {
@@ -175,7 +175,7 @@ afterEvaluate {
                 artifact androidSourcesJar
                 artifact androidJavadocJar
 
-                groupId = "jp.co.lycorp"
+                groupId = "com.linecorp"
                 artifactId = "webauthn-kotlin"
                 version = project.ext.versionName
 
