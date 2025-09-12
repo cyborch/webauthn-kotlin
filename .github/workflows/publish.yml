@@ -50,16 +50,20 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-    - name: Debug - Check if secrets are available
-      run: |
-        echo "MAVEN_CENTRAL_USERNAME available: ${{ secrets.MAVEN_CENTRAL_USERNAME != '' }}"
-        echo "MAVEN_CENTRAL_PASSWORD available: ${{ secrets.MAVEN_CENTRAL_PASSWORD != '' }}"
-        echo "GPG_SECRET_KEY_ID available: ${{ secrets.GPG_SECRET_KEY_ID != '' }}"
-        echo "GPG_SECRET_KEY available: ${{ secrets.GPG_SECRET_KEY != '' }}"
-        echo "GPG_SECRET_PASSWORD available: ${{ secrets.GPG_SECRET_PASSWORD != '' }}"
 
-    - name: Publish to the Maven Central Repository
-      run: ./gradlew --max-workers=1 publish closeAndReleaseSonatypeRepository
+    - name: Publish Snapshot to Sonatype
+      if: github.event_name != 'release'
+      run: ./gradlew --max-workers=1 publishToSonatype
+      env:
+        ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+        ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.GPG_SECRET_KEY_ID }}
+        ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_SECRET_KEY }}
+        ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_SECRET_PASSWORD }}
+
+    - name: Publish Release to Maven Central
+      if: github.event_name == 'release'
+      run: ./gradlew --max-workers=1 publishToSonatype closeAndReleaseSonatypeRepository
       env:
         ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
         ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
