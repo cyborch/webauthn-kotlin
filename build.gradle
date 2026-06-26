@@ -14,19 +14,6 @@
  * under the License.
  */
 
-buildscript {
-    ext.kotlin_version = "$project.kotlinVersion"
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.10"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.9.3.0"
-    }
-}
-
 plugins {
     id "io.github.gradle-nexus.publish-plugin" version "1.3.0"
 }
