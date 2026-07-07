@@ -30,7 +30,15 @@ import java.security.cert.X509Certificate
 
 class Fido2Util {
     companion object {
+        private var originOverride: String? = null
+
+        fun setWebAuthnOrigin(origin: String?) {
+            originOverride = origin
+        }
+
         fun getPackageFacetID(context: Context): String {
+            originOverride?.let { return it }
+
             val cert: ByteArray = if (Build.VERSION.SDK_INT >= 33) {
                 context.packageManager.getPackageInfo(
                     context.packageName,
